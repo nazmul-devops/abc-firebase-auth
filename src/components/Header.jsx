@@ -50,7 +50,9 @@ const Header = () => {
           {/* <a href="/" className="btn btn-ghost normal-case text-xl">
             ABC Firebase Auth
           </a> */}
-          <img className="px-5 py-2" src={logo2} alt="" />
+          <Link to="/">
+            <img className="px-5 py-2" src={logo2} alt="" />
+          </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
           <ul className="menu menu-horizontal px-1">{navLinks}</ul>
