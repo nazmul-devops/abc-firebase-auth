@@ -1,12 +1,7 @@
-// import React from "react";
 
-import { useContext } from "react";
-import AuthProvider, { AuthContext } from "../providers/AuthProvider";
 
 const Home = () => {
-  
-  const authInformation = useContext(AuthContext);
-  console.log(authInformation);
+
   return (
     <div
       className="hero min-h-screen"

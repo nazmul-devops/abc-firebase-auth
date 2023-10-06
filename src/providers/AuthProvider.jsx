@@ -1,35 +1,86 @@
-// import React from 'react';
-import PropTypes from 'prop-types';
-import { createContext, useState } from "react";
+import {
+  GoogleAuthProvider,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+} from "firebase/auth";
+
+import PropTypes from "prop-types";
+import { createContext, useEffect, useState } from "react";
+import auth from "../firebase/firebase.config";
 
 export const AuthContext = createContext(null);
 
-const AuthProvider = ({children}) => {
-    const [user, setUser] = useState(); 
+const googleProvider = new GoogleAuthProvider();
 
-    const createUser = () => {
-        return createUser
-    }
+const AuthProvider = ({ children }) => {
+  const [user, setUser] = useState(null);
 
-    const authInfo = {}
-    return (
-        <div>
-            <AuthContext.Provider value={authInfo}>
-                {children}
-            </AuthContext.Provider>
-        </div>
-    );
+  const [loading, setLoading] = useState(true);
+
+  const createUser = (email, password) => {
+    setLoading(true);
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  const signInUser = (email, password) => {
+    setLoading(true);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const signOutUser = () => {
+    setLoading(true);
+    return signOut(auth);
+  };
+
+  const googleSignIn = () => {
+    setLoading(true);
+    return signInWithPopup(auth, googleProvider);
+  };
+
+  // observer auth state change
+  useEffect(() => {
+    const unSubscribe = onAuthStateChanged(auth, currentUser => {
+      setUser(currentUser);
+      setLoading(false);
+      console.log(
+        `Observing  current user inside useEffect of AuthProvider`,
+        currentUser
+      );
+    });
+    return () => {
+      unSubscribe();
+    };
+  }, []);
+
+  const authInfo = {
+    user,
+    createUser,
+    signInUser,
+    signOutUser,
+    loading,
+    googleSignIn,
+  };
+
+  return (
+    <div>
+      <AuthContext.Provider value={authInfo}>{children}</AuthContext.Provider>
+    </div>
+  );
 };
 
 export default AuthProvider;
 
 AuthProvider.propTypes = {
-    children: PropTypes.node,
-
-}
+  children: PropTypes.node,
+};
 
 /**
  * 1. Create Context
  * 2. Set provider with value
- * 3. 
-*/
+ * 3. use the Authprovider in the main jsx file over routerProvider
+ * 4. access children in the Authprovider component as children
+ *    and use it with the children prop in the middle.
+ */

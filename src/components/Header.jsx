@@ -3,8 +3,18 @@ import { Link, NavLink } from "react-router-dom";
 import "./Header.css";
 // import logo from "../assets/logo.png";
 import logo2 from "../assets/22.png";
+import { useContext } from "react";
+import { AuthContext } from "../providers/AuthProvider";
 
 const Header = () => {
+  const { user, signOutUser } = useContext(AuthContext);
+
+  const handleSignOutUser = () => {
+    signOutUser()
+      .then(() => console.log("User logged out successfully."))
+      .catch(error => console.error(error));
+  };
+
   const navLinks = (
     <>
       <li>
@@ -16,6 +26,19 @@ const Header = () => {
       <li>
         <NavLink to="/register">Register</NavLink>
       </li>
+      <li>
+        <NavLink to="/orders">Orders</NavLink>
+      </li>
+      {user && (
+        <>
+          <li>
+            <NavLink to="/dashboard">Dashboard</NavLink>
+          </li>
+          <li>
+            <NavLink to="/profile">Profile</NavLink>
+          </li>
+        </>
+      )}
     </>
   );
   return (
@@ -62,9 +85,18 @@ const Header = () => {
         </div>
 
         <div className="navbar-end hidden lg:flex pr-5">
-          <Link to="/contact">
-            <a className="btn">Contact Us</a>
-          </Link>
+          {user ? (
+            <>
+              <span>{user.email}</span>{" "}
+              <a onClick={handleSignOutUser} className="btn btn-sm">
+                Sign Out
+              </a>
+            </>
+          ) : (
+            <Link to="/login">
+              <button className="btn btn-sm">Please Sign In</button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

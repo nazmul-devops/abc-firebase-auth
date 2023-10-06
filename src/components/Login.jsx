@@ -1,12 +1,40 @@
-// import React from "react";
-import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { AuthContext } from "../providers/AuthProvider";
+import { FcGoogle } from "react-icons/fc";
+import { FaLinkedin } from "react-icons/fa";
+import { FaFacebookSquare } from "react-icons/fa";
 
 const Login = () => {
+  const { signInUser, googleSignIn } = useContext(AuthContext);
+
+  const navigate = useNavigate();
+
   const handleLogin = e => {
     e.preventDefault();
     const email = e.target.email.value;
     const password = e.target.password.value;
-    console.log(email, password);
+    // console.log(email, password);
+
+    signInUser(email, password)
+      .then(result => {
+        console.log(result.user);
+        e.target.reset();
+        navigate("/");
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  const handleGoogleSignIn = () => {
+    googleSignIn()
+      .then(result => {
+        console.log(result.user);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -47,12 +75,24 @@ const Login = () => {
             </div>
             <div className="form-control mt-6">
               <button className="btn btn-primary">Login</button>
-              <p className="py-4">Do not have an account?</p>
-              <p>
-                <Link to="/register">
-                  <button className="btn-link">Please Register</button>
+              <p className="py-4">
+                Do not have an account?
+                <Link className="ml-3" to="/register">
+                  <button className="btn-link">Register</button>
                 </Link>
               </p>
+
+              <div className="flex gap-5">
+                <button onClick={handleGoogleSignIn}>
+                  <FcGoogle className="text-3xl"></FcGoogle>
+                </button>
+                <button>
+                  <FaFacebookSquare className="text-3xl"></FaFacebookSquare>
+                </button>
+                <button>
+                  <FaLinkedin className="text-3xl"></FaLinkedin>
+                </button>
+              </div>
             </div>
           </form>
         </div>

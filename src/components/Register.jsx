@@ -1,16 +1,27 @@
 // import React from "react";
 
+import { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../providers/AuthProvider";
 
 const Register = () => {
+  const { createUser } = useContext(AuthContext);
+
   const handleRegister = e => {
     e.preventDefault();
     const name = e.target.name.value;
     const email = e.target.email.value;
     const mobile = e.target.mobile.value;
-    const password1 = e.target.password1.value;
-    const password2 = e.target.password2.value;
-    console.log(name, email, mobile, password1, password2);
+    const password = e.target.password.value;
+
+    // create user in firebase
+    createUser(email, password)
+      .then(result => {
+        console.log(result.user);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   };
 
   return (
@@ -61,29 +72,17 @@ const Register = () => {
 
             <div className="form-control">
               <label className="label">
-                <span className="label-text">New Password</span>
+                <span className="label-text">Password</span>
               </label>
               <input
                 type="password"
                 placeholder="password"
-                name="password1"
+                name="password"
                 className="input input-bordered"
                 required
               />
             </div>
 
-            <div className="form-control">
-              <label className="label">
-                <span className="label-text">Re-type Password</span>
-              </label>
-              <input
-                type="password"
-                placeholder="password"
-                name="password2"
-                className="input input-bordered"
-                required
-              />
-            </div>
             <div className="form-control mt-6">
               <button className="btn btn-primary">Register</button>
               <p className="py-4">
